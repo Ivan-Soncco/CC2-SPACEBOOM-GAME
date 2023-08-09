@@ -7,6 +7,7 @@ class PlayState;
 
 class GameState {
 public:
+	GameState() {};
     virtual ~GameState() {};
     virtual void handleInput(GameManager* context) = 0;
     virtual void update() = 0;

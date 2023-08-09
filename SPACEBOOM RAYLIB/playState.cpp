@@ -7,6 +7,7 @@
 #include "nave.h"
 #include "gameOverState.h"
 #include <memory>
+#include <thread>
 
 #define MAX_ENEMIES 6
 #define MAX_BULLETS 100
@@ -15,9 +16,11 @@
 
 void PlayState::handleInput(GameManager* context) {
     if (IsKeyPressed(KEY_U)) {
+        PlaySound(buttonPlay);
         context->changeState(new MenuState()); // Cambiar al estado Play
     }
     if (gameOver==true){
+
         context->changeState(new GameOverState(player1,player2));
 
     }
@@ -43,7 +46,8 @@ void PlayState::update(){
         objColision=new Colision();
         for (int i = 0; i < MAX_ENEMIES; i++)
         {
-        arrayEnemy[i].setModelo(LoadModel("data/asteroideCua.gltf"));
+        //arrayEnemy[i].setModelo(LoadModel("data/asteroideCua.gltf"));
+        arrayEnemy[i].setModelo(LoadModel("data/asteroide.gltf"));
         }
 
         firstUpdate=true;
@@ -61,6 +65,7 @@ void PlayState::update(){
     if (IsKeyPressed(KEY_SPACE) && player1->bulletCount > 0)
     {       
             player1->disparar();
+            PlaySound(soundBala1);
     }
 
     // Player 2 movement
@@ -77,6 +82,7 @@ void PlayState::update(){
     if (IsKeyPressed(KEY_UP) && player2->bulletCount > 0)
     {    
         player2->disparar();
+        PlaySound(soundBala2);
     }
 
     // Move bullets 1
@@ -88,7 +94,6 @@ void PlayState::update(){
     //Movimiento enemigo
     for (int i = 0; i < MAX_ENEMIES; i++){
             arrayEnemy[i].move(elapsedTime);
-            //objColision->colisionan(player1,&arrayEnemy[i],i);
         }
     //Colision nave enemigo
     
@@ -97,6 +102,7 @@ void PlayState::update(){
             objColision->colisionan(player1,&arrayEnemy[i],i);
             objColision->colisionan(player2,&arrayEnemy[i],i);
         }
+    
     if (player1->bandera && player2->bandera)
         {
             gameOver = true;

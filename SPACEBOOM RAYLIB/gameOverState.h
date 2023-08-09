@@ -14,10 +14,9 @@ public:
     void handleInput(GameManager* context) override;
     void update() override;
     void render() override;
-    bool drawOnceMenu=false;
+    Sound buttonGameOver=LoadSound("data/soundButton.mp3");
 private:
     std::shared_ptr<Nave> play1;
     std::shared_ptr<Nave> play2;
 };
-
 #endif

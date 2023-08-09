@@ -40,7 +40,7 @@ void Nave::disparar(){
                     break;
                 }
             }
-
+            
             if (bulletFired)
             {
                 bulletCount--;

@@ -18,8 +18,7 @@ class Enemy : public Entidad{
         int getEnemyPoints();
         void msj(int);
         void move(double);
-        void colisionConBala(Nave*,int);
-        void colisionConNave(Nave*,int);
+        
         void reiniciarEnemy();
         void draw();
     private:

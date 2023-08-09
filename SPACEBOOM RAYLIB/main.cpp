@@ -10,16 +10,10 @@ using namespace std;
 
 int main () {
 
-    
-    cout << "Hello World" << endl;
-
     InitWindow(screenWidth, screenHeight, "SpaceBoom");
     SetTargetFPS(60);
-    
-    
     GameManager gameManager;
     gameManager.runGameLoop();
-    
     
     return 0;
 }

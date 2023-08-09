@@ -10,9 +10,11 @@
 
 void GameOverState::handleInput(GameManager* context) {
     if (IsKeyPressed(KEY_R)) {
+        PlaySound(buttonGameOver);
         context->changeState(new PlayState()); // Cambiar al estado Play
     }
     if (IsKeyPressed(KEY_Q)) {
+        PlaySound(buttonGameOver);
         context->changeState(new MenuState()); // Cambiar al estado Play
     }
 }

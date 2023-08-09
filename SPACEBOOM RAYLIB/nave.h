@@ -20,7 +20,6 @@ class Nave: public Entidad{
         int bulletCount= MAX_BULLETS;
         bool bulletActive[MAX_BULLETS]{0};
         Bala arrayBalas[MAX_BULLETS];
-        //std::unique_ptr<Bala> arrayBalas[MAX_BULLETS];
         int score{0};
         bool bandera=false;
         float model = 0.2;

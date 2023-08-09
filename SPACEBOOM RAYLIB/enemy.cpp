@@ -59,42 +59,6 @@ void Enemy::move(double elapsedTime){
                 setPosicionY(5.0f);
 }
 
-void Enemy::colisionConBala(Nave* player1,int i){
-    if (CheckCollisionBoxSphere((BoundingBox){(Vector3){getPosicionX()- 0.5f, getPosicionY() - 0.5f, getPosicionZ() - 0.5f},
-                                                              (Vector3){getPosicionX() + 0.5f, getPosicionY() + 0.5f, getPosicionZ() + 0.5f}},
-                                                (Vector3){player1->arrayBalas[i].getPosicionX(), player1->arrayBalas[i].getPosicionY(), player1->arrayBalas[i].getPosicionZ()}, 0.1f))
-                    {
-                        player1->bulletActive[i] = false;
-
-                        float x = GetRandomValue(-30, -10);
-                        float z = GetRandomValue(-6, 6);
-                        setPosicion((Vector3){x, 0.0f, z});
-
-                        player1->score += getEnemyPoints();
-                    }
-}
-void Enemy::colisionConNave(Nave* nave,int i){
-    if (CheckCollisionBoxSphere((BoundingBox){(Vector3){nave->getPosicionX() - 0.5f, nave->getPosicionY() - 0.5f, nave->getPosicionZ() - 0.5f},
-                                                      (Vector3){nave->getPosicionX() + 0.5f, nave->getPosicionY() + 0.5f, nave->getPosicionZ() + 0.5f}},
-                                        (Vector3){getPosicionX(), getPosicionY(), getPosicionZ()}, 0.5f))
-            {
-
-                nave->bandera= true;
-                nave->model = 0.02;
-                // bloquear movimiento y disparo del jugador 1
-                nave->setPosicionX(-120);
-                nave->bulletCount = 0;
-
-                float x = GetRandomValue(-30, -10);
-                float z = GetRandomValue(-6, 6);
-                nave->bulletActive[i] = false;
-                nave->arrayBalas[i].setPosicion((Vector3){-120, 0.0f, 0.0f});
-
-                setPosicion((Vector3){x, 0.0f, z});
-                
-            }
-}
-
 void Enemy::reiniciarEnemy(){
     
     float x = GetRandomValue(-30, -10);

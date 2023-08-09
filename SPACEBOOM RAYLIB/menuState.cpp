@@ -9,6 +9,7 @@
 
 void MenuState::handleInput(GameManager* context) {
     if (IsKeyPressed(KEY_Q)) {
+        PlaySound(menuSound);
         context->changeState(new PlayState()); // Cambiar al estado Play
     }
     
@@ -21,6 +22,6 @@ void MenuState::update(){
 void MenuState::render() {
         ClearBackground(BLACK);
         DrawTexture(startTexture, screenWidth/2 - startTexture.width/2, screenHeight/2 - startTexture.height/2, WHITE);
-        DrawText("GAME MENUSTATE", screenWidth / 2 - MeasureText("GAME MENUSTATE", 20) / 2, screenHeight / 2 + 20, 20, GRAY);
-        DrawText("Press Q to start", screenWidth / 2 - MeasureText("Press Q to start", 20) / 2, screenHeight / 2 + 40, 20, GRAY);
+        DrawText("SPACEBOOM", screenWidth / 2 - MeasureText("SPACEBOOM", 50) / 2, 100, 50, BLUE);
+        DrawText("Press Q to start", screenWidth / 2 - MeasureText("Press Q to start", 20) / 2, screenHeight / 2 + 40, 20, BEIGE);
 }
