@@ -4,14 +4,17 @@
 #include "enemy.h"
 #include "bala.h"
 #include <iostream>
+#include <mutex>
 
 class Colision{
     public:
         Colision(){};
         ~Colision(){std::cout<<"Colision Destruido"<<std::endl;};
-        void colisionan(std::shared_ptr<Nave>,Enemy*, int);
+        void colisionanNave(std::shared_ptr<Nave>,Enemy*, int);
+        void colisionanBala(std::shared_ptr<Nave>,Enemy*, int);
         Sound naveColision = LoadSound("data/naveColision.mp3");
         Sound balaColision = LoadSound("data/balaColision.mp3");
+        std::mutex mutexColision;
 };
 
 

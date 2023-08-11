@@ -14,6 +14,31 @@
 #define screenWidth 940
 #define screenHeight 480
 
+PlayState::PlayState(){
+        camera.position = (Vector3){-110.0f, 1.0f, 0.0f};
+        //camera.position = (Vector3){120.0f, 120.0f, 120.0f};
+        camera.target = (Vector3){0.0f, 0.0f, 0.0f};
+        camera.up = (Vector3){0.0f, 1.0f, 0.0f};
+        camera.fovy = 35.0f;
+        camera.projection = CAMERA_PERSPECTIVE;
+
+        player1 = std::make_shared<Nave>(LoadModel("data/nave.gltf"));
+        player1->setPosicion((Vector3){-99.0f, 0.0f, -1.0f});
+
+        player2 = std::make_shared<Nave>(LoadModel("data/nave.gltf"));
+        player2->setPosicion((Vector3){-99.0f, 0.0f, 1.0f});
+
+        objColision=new Colision();
+        for (int i = 0; i < MAX_ENEMIES; i++)
+        {
+            arrayEnemy[i].setModelo(LoadModel("data/asteroide.gltf"));
+        }
+}
+PlayState::~PlayState(){
+    std::cout<<"Play Destruido"<<std::endl;
+}
+
+
 void PlayState::handleInput(GameManager* context) {
     if (IsKeyPressed(KEY_U)) {
         PlaySound(buttonPlay);
@@ -27,47 +52,23 @@ void PlayState::handleInput(GameManager* context) {
 }
 
 void PlayState::update(){
-    
-    if(firstUpdate==false){
-        camera.position = (Vector3){-110.0f, 1.0f, 0.0f};
-        //camera.position = (Vector3){120.0f, 120.0f, 120.0f};
-        camera.target = (Vector3){0.0f, 0.0f, 0.0f};
-        camera.up = (Vector3){0.0f, 1.0f, 0.0f};
-        camera.fovy = 35.0f;
-        camera.projection = CAMERA_PERSPECTIVE;
-
-        player1 = std::make_shared<Nave>(LoadModel("data/nave.gltf"));
-        //player1 =new  Nave(LoadModel("data/nave.gltf"));
-        player1->setPosicion((Vector3){-99.0f, 0.0f, -1.0f});
-
-        player2 = std::make_shared<Nave>(LoadModel("data/nave.gltf"));
-        //player2 =new  Nave(LoadModel("data/nave.gltf"));
-        player2->setPosicion((Vector3){-99.0f, 0.0f, 1.0f});
-        objColision=new Colision();
-        for (int i = 0; i < MAX_ENEMIES; i++)
-        {
-        //arrayEnemy[i].setModelo(LoadModel("data/asteroideCua.gltf"));
-        arrayEnemy[i].setModelo(LoadModel("data/asteroide.gltf"));
-        }
-
-        firstUpdate=true;
+    std::thread threadPlayer1([&]() {
+    // Movimiento player1
+    if (IsKeyDown(KEY_A)) {
+        player1->movIzquierda();
+    } else if (IsKeyDown(KEY_D)) {
+        player1->movDerecha();
     }
-    //Movimiento player1
-    if (IsKeyDown(KEY_A))
-        {
-            player1->movIzquierda();
-        }
-    else if (IsKeyDown(KEY_D))
-        {
-            player1->movDerecha();
-        }
     // Player 1 shoot bullet
-    if (IsKeyPressed(KEY_SPACE) && player1->bulletCount > 0)
-    {       
-            player1->disparar();
-            PlaySound(soundBala1);
+    if (IsKeyPressed(KEY_SPACE) && player1->bulletCount > 0) {
+        player1->disparar();
+        PlaySound(soundBala1);
     }
-
+    // Move bullets 1
+    player1->moverBala();
+    });
+    
+    std::thread threadPlayer2([&]() {
     // Player 2 movement
     if (IsKeyDown(KEY_LEFT))
     {
@@ -77,67 +78,71 @@ void PlayState::update(){
     {
         player2->movDerecha();
     }
-
     // Player 2 shoot bullet
     if (IsKeyPressed(KEY_UP) && player2->bulletCount > 0)
     {    
         player2->disparar();
         PlaySound(soundBala2);
     }
-
-    // Move bullets 1
-    player1->moverBala();
-
     // Move bullets 2
     player2->moverBala();
-
+    });
+    
+    if (threadPlayer1.joinable())
+    {
+        threadPlayer1.join();
+    }
+    if (threadPlayer2.joinable())
+    {
+        threadPlayer2.join();
+    }
+    
     //Movimiento enemigo
     for (int i = 0; i < MAX_ENEMIES; i++){
             arrayEnemy[i].move(elapsedTime);
         }
+    
     //Colision nave enemigo
-    
     for (int i = 0; i < MAX_ENEMIES; i++)
-        {
-            objColision->colisionan(player1,&arrayEnemy[i],i);
-            objColision->colisionan(player2,&arrayEnemy[i],i);
+        {     
+            objColision->colisionanNave(player1,&arrayEnemy[i],i);  
         }
-    
-    if (player1->bandera && player2->bandera)
-        {
-            gameOver = true;
-            player1->bandera = false;
-            player2->bandera = false;
-            return;
-        }   
+    for (int i = 0; i < MAX_ENEMIES; i++)
+        {   
+            
+            objColision->colisionanNave(player2,&arrayEnemy[i],i);  
+        }
 
     //Colision Bala Enemigo
-    
     for (int i = 0; i < MAX_BULLETS; i++)
         {
             if (player1->bulletActive[i])
             {
                 for (int j = 0; j < MAX_ENEMIES; j++)
                 {
-                    //arrayEnemy[j].colisionConBala(player1,i);
-                    objColision->colisionan(player1,&arrayEnemy[j],i);
+                    objColision->colisionanBala(player1,&arrayEnemy[j],i);
                 }
             }
             if (player2->bulletActive[i])
             {
                 for (int j = 0; j < MAX_ENEMIES; j++)
                 {
-                    //arrayEnemy[j].colisionConBala(player2,i);
-                    objColision->colisionan(player2,&arrayEnemy[j],i);
+                    objColision->colisionanBala(player2,&arrayEnemy[j],i);
                 }
             }
-        }    
+        }
+        
+    if (player1->bandera && player2->bandera)
+        {
+            gameOver = true;
+            player1->bandera = false;
+            player2->bandera = false;
+            return;
+        }
 }
 
 void PlayState::render(){
-        
         ClearBackground(BLACK);
-
         BeginMode3D(camera);
 
         // Draw player 1 ship
@@ -166,7 +171,9 @@ void PlayState::render(){
             }
         }
         EndMode3D();
+        
         // Draw UI
+        
         DrawText("JUGADOR 1", 10, 10, 20, RED);
         DrawText(TextFormat("Score: %04i", player1->score), 10, 30, 20, GREEN);
         DrawText(TextFormat("Bullets: %02i", player1->bulletCount), 10, 50, 20, MAROON);
@@ -176,4 +183,5 @@ void PlayState::render(){
         DrawText(TextFormat("Score: %04i", player2->score), screenWidth - 150, 30, 20, GREEN);
         DrawText(TextFormat("Bullets: %02i", player2->bulletCount), screenWidth - 150, 50, 20, MAROON);
         DrawText("PLAYER 2: Muevete con 4 y 6 ; dispara con ENTER", 10, 90, 20, WHITE);
+        
 }

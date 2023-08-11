@@ -12,14 +12,22 @@ Nave::Nave(Model m1)
     setModelo(m1);
 }
 void Nave::movIzquierda(){
+    //std::lock_guard<std::mutex> lock(mutexNave);
+    std::unique_lock<std::mutex> guard(mutexNave, std::defer_lock);
+    guard.lock();
     getPosicionZ()-= 0.2f;
+    guard.unlock();
     //restriccion
     if(getPosicionZ() < -6.0f){
         setPosicionZ(-6.0f);
     }
 }
 void Nave::movDerecha(){
+    //std::lock_guard<std::mutex> lock(mutexNave);
+    std::unique_lock<std::mutex> guard(mutexNave, std::defer_lock);
+    guard.lock();
     getPosicionZ()+= 0.2f;
+    guard.unlock();
     //restriccion
     if(getPosicionZ() > 6.0f){
         setPosicionZ(6.0f);
@@ -28,15 +36,17 @@ void Nave::movDerecha(){
 
 void Nave::disparar(){
             bool bulletFired = false;
-
+            std::unique_lock<std::mutex> guard(mutexNave, std::defer_lock);
             for (int i = 0; i < MAX_BULLETS; i++)
             {
                 if (!bulletActive[i])
                 {
-                    //arrayBalas[i]= std::make_unique<Bala>();
+                    
+                    guard.lock();
                     arrayBalas[i].setPosicion(getPosicion());
                     bulletActive[i] = true;
                     bulletFired = true;
+                    guard.unlock();
                     break;
                 }
             }
@@ -49,17 +59,19 @@ void Nave::disparar(){
 void Nave::moverBala(){
 
     const int screenWidth = 940;
-    
+    std::unique_lock<std::mutex> guard(mutexNave, std::defer_lock);
     for (int i = 0; i < MAX_BULLETS; i++)
             {
                 if (bulletActive[i])
-                {
+                {   
+                    guard.lock();
                     arrayBalas[i].getPosicionX()+= 0.2f;
-    
+
                     if (arrayBalas[i].getPosicionX() > screenWidth)
                     {
                         bulletActive[i] = false;
                     }
+                    guard.unlock();
                 }
             }        
 }

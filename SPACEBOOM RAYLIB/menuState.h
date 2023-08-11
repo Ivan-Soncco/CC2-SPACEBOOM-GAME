@@ -11,12 +11,14 @@ class PlayState;
 
 class MenuState : public GameState {
 public:
-    MenuState(){PlaySound(menuSound);};
+    MenuState();
     ~MenuState(){ std::cout<<"Menu Destruido"<<std::endl;};
     void handleInput(GameManager* context) override;
     void update() override;
     void render() override;
-    Sound menuSound=LoadSound("data/menuSound.mp3"); 
-    Texture2D startTexture= LoadTexture("data/fondo1.png");    
+    Sound menuSound; 
+    Texture2D startTexture;
+    Sound buttonMenu;
+
 };
 #endif

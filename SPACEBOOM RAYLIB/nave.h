@@ -5,6 +5,7 @@
 #include "bala.h"
 #include <memory>
 #include <iostream>
+#include <mutex>
 
 #define MAX_BULLETS 100
 
@@ -25,6 +26,7 @@ class Nave: public Entidad{
         float model = 0.2;
         void reiniciarNave();
         void draw();
+        std::mutex mutexNave;
 };
 
 #endif

@@ -21,6 +21,4 @@ class GameManager{
     GameState* estadoActual=nullptr;
 };
 
-
-
 #endif

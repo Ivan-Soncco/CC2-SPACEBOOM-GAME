@@ -18,6 +18,7 @@ Game Enemy::getGamefromEnemy(){
 Enemy::Enemy(Model m1)
 {
     setModelo(m1);
+    setRandomPosition();
 }
 
 int Enemy::getEnemyPoints()
@@ -25,14 +26,15 @@ int Enemy::getEnemyPoints()
     return enemyPoints;
 }
 
+void Enemy::setRandomPosition(){
+    float x = GetRandomValue(-30, -10);
+    float z = GetRandomValue(-6, 6);
+    setPosicion((Vector3){x, 0.0f, z});
+}
 
 void Enemy::msj(int i){
     const int screenWidth = 940;
     const int screenHeight = 480;
-    //const char* enemyName = "Enemy ";
-    //char enemyIndex[10];
-    //sprintf(enemyIndex,i);
-
     DrawText(TextFormat("Enemy %d",(i+1)), screenWidth / 2 - MeasureText("Enemy %d", 20) / 2, screenHeight / 2 + ((i+2)*40), 20, GRAY);  
 }
 

@@ -7,9 +7,17 @@
 #define screenWidth 940
 #define screenHeight 480
 
+MenuState::MenuState(){
+    menuSound=LoadSound("data/menuSound.mp3"); 
+    buttonMenu=LoadSound("data/soundButton.mp3");
+    PlaySound(menuSound);
+    startTexture= LoadTexture("data/fondo1.png");
+}
+
+
 void MenuState::handleInput(GameManager* context) {
     if (IsKeyPressed(KEY_Q)) {
-        PlaySound(menuSound);
+        PlaySound(buttonMenu);
         context->changeState(new PlayState()); // Cambiar al estado Play
     }
     
